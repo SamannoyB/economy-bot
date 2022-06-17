@@ -2,7 +2,6 @@ const { Client, Intents, MessageEmbed, MessageActionRow, MessageReaction } = req
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],restRequestTimeout: 60000 });
 require("dotenv").config();
 const fs = require('fs');
-const { parse } = require('path');
 
 client.on('ready', () => {
     console.log(`Logged In As ${client.user.tag}!`);
@@ -64,6 +63,32 @@ client.on("messageCreate", message => {
             message.reply('Amount: ' + amount);
         })
     }
-})
+});
+
+client.on('messageCreate', message => {
+    if(message.content.startsWith(`?dig`)) {
+        message.react('⛏️');
+        const amt = ['50','60'];
+        
+        const op = amt[Math.floor(Math.random() * amt.length)];
+
+        message.reply(`You received ${op} for digging!`);
+
+        const userJson = fs.readFileSync(`./DB/users.json`);
+
+        const parsedJson = JSON.parse(userJson);
+
+        let early = parseInt(parsedJson[message.author.username].bal);
+       let newer = parseInt(op);
+
+       let perf = early + newer;
+       parsedJson[message.author.username].bal = perf;
+
+        fs.writeFileSync(`./DB/users.json`, JSON.stringify(parsedJson));
+    }
+});
+
+
+
 
 client.login(process.env.TOKEN)
