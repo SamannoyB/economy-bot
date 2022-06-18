@@ -88,6 +88,45 @@ client.on('messageCreate', message => {
     }
 });
 
+client.on('messageCreate', message => {
+     if (message.content.startsWith(`?pay`)) {
+        let amtPay = message.content.split(" ");
+        let paid = amtPay[1];
+        let recipient = amtPay[2];
+
+        const userJson = fs.readFileSync(`./DB/users.json`);
+
+        const parsedJson = JSON.parse(userJson);
+
+        // Comments here
+
+
+       if (isNaN(paid)) {
+        message.reply(`The second argument must be a number.`);
+       }
+       if (parsedJson[message.author.username].bal < paid) 
+       {
+        message.reply(`You do not have that much coins in your bank.`);
+       }
+       else {
+         message.reply(`Success! You succesfully paid ${paid} to ${amtPay[2]}`);
+         let earlye = parseInt(parsedJson[message.author.username].bal);
+         let newere = parseInt(paid);
+  
+         let perfe = earlye - newere;
+         let parse = parsedJson[message.author.username].bal = perfe;   
+          fs.writeFileSync(`./DB/users.json`, JSON.stringify(parse));
+
+         let early = parseInt(parsedJson[recipient].bal);
+       let newer = parseInt(paid);
+
+       let perf = early + newer;
+       parsedJson[recipient].bal = perf;   
+        fs.writeFileSync(`./DB/users.json`, JSON.stringify(parsedJson));
+    }
+    }
+});
+
 
 
 
